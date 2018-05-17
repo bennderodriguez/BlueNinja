@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Enuesta Blue Buffalo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!-- Favicon -->
+        <link href="favicon.ico" rel="icon">
+        <style>
+            .well {
+                min-height: 20px;
+                padding: 19px;
+                margin-bottom: 20px;
+                background-color: #fff0cb;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+            }
+
+            .row {
+                margin-left: -15px;
+                margin-right: -15px;
+                margin-top: 5em;
+            }
+
+            .center {
+                margin: auto;
+                width: 60%;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body style="background-color: #042b4e">
+
+
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="well">
+                    <form role="form" id="contactForm" data-toggle="validator" class="shake">
+                        <div class="row">
+                            <div class="center" id="logo">
+                                <img src="logo.png" width="100%"/>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="name" class="h4">Usuario</label>
+                                <input type="text" class="form-control" autocomplete="off" id="usuario" required data-error="Escriba su nombre de usuario">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="email" class="h4">Contraseña</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password" required data-error="Escriba su contraseña">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <button type="submit" id="form-submit" class="btn btn-success btn-lg pull-right ">Acceder</button>
+                        <div id="msgSubmit" class="h3 text-center hidden"></div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    </body>
+    <script  type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/validator.min.js"></script>
+    <script>
+        $("#contactForm").validator().on("submit", function (event) {
+            if (event.isDefaultPrevented()) {
+                // handle the invalid form...
+                formError();
+                submitMSG(false, "Todos los campos son requeridos");
+            } else {
+                // everything looks good!
+                event.preventDefault();
+                submitForm();
+            }
+        });
+
+
+        function submitForm() {
+            // Initiate Variables With Form Content
+            var usuario = $("#usuario").val();
+            var password = $("#password").val();
+
+
+            $.ajax({
+                type: "POST",
+                url: "php/form-process.php",
+                data: "usuario=" + usuario + "&password=" + password,
+                success: function (text) {
+                    if (text == "success") {
+                        formSuccess();
+                    } else {
+                        formError();
+                        submitMSG(false, text);
+                    }
+                }
+            });
+        }
+
+        function formSuccess() {
+            $("#contactForm")[0].reset();
+            submitMSG(true, "Bienvenido!")
+            $(location).attr('href', 'RespuestasBlueBuffalo.php')
+        }
+
+        function formError() {
+            $("#contactForm").removeClass().addClass('shake animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                $(this).removeClass();
+            });
+        }
+
+        function submitMSG(valid, msg) {
+            if (valid) {
+                var msgClasses = "h3 text-center tada animated text-success";
+            } else {
+                var msgClasses = "h3 text-center text-danger";
+            }
+            $("#msgSubmit").removeClass().addClass(msgClasses).text(msg);
+        }
+    </script>
+</html>
